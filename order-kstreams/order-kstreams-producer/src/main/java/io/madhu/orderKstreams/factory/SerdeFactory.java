@@ -20,7 +20,6 @@ public class SerdeFactory {
 
     private static ObjectMapper objectMapper = new ObjectMapper();
 
-
     public static Serde<Order> orderSerde(){
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,false);

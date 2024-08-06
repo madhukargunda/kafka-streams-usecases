@@ -57,12 +57,10 @@ public class OrderDataProduceService {
         IntStream.range(0, 10)
                 .forEach(o -> {
                     List<Order> orders = this.buildOrders();
-
                     for (Order order : orders) {
                         log.info(String.format("Bulk Orders iteration - Published ==> %s", order));
                         kafkaTemplate.send(TOPIC_NAME, order);
                     }
-
                 });
     }
 

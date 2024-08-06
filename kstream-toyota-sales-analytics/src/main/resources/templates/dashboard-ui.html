@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Car Sales Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent scrolling */
+        }
+
+        .container {
+            max-width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #007bff;
+            margin: 0 0 10px;
+        }
+
+        .dashboard {
+            width: 100%;
+            max-width: 1200px;
+            height: 80vh; /* Adjust based on screen size */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #ffffff;
+            overflow: hidden; /* Hide overflow */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 16px; /* Adjust font size */
+            table-layout: fixed; /* Fixed table layout */
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .highlight {
+            background-color: #ffff99;
+            transition: background-color 0.2s ease;
+        }
+
+        td.stateName {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        td.count {
+            width: 20%; /* Adjust width as needed */
+        }
+
+        tr.highlight {
+            background-color: #ffff99 !important; /* Use !important to override grey background */
+            transition: background-color 0.2s ease; /* Smooth transition */
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Real-time Car Sales Dashboard</h1>
+    <h2>Real-time Car Sales Data</h2>
+    <div class="dashboard">
+        <table>
+            <thead>
+            <tr>
+                <th class="stateName">State Name</th>
+                <th class="count">Count</th>
+            </tr>
+            </thead>
+            <tbody id="stateData">
+            <!-- Data will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+
+    // Function to handle incoming messages from the server
+    function handleServerEvent(event) {
+        console.log('Received data:', event.data); // Debugging line
+
+        try {
+            const data = JSON.parse(event.data);
+            console.log('Parsed data:', data); // Debugging line
+
+            // Check if data is an object
+            if (typeof data !== 'object' || data === null) {
+                console.error('Data is not an object:', data);
+                return;
+            }
+
+            const tableBody = document.getElementById('stateData');
+            let row = Array.from(tableBody.rows).find(row => row.cells[0].textContent === data.stateName);
+
+            if (row) {
+                // Highlight the row first
+                row.classList.add('highlight');
+
+                // Update the count value after a short delay
+                setTimeout(() => {
+                    row.cells[1].textContent = data.count;
+
+                    // Remove the highlight after updating the count
+                    setTimeout(() => {
+                        row.classList.remove('highlight');
+                    }, 2000); // Keep highlight for 2 seconds
+                }, 200); // Delay count update slightly for better visual effect
+            } else {
+                // Create a new row for the new state
+                row = document.createElement('tr');
+                const stateNameCell = document.createElement('td');
+                stateNameCell.textContent = data.stateName;
+                stateNameCell.classList.add('stateName');
+
+                const countCell = document.createElement('td');
+                countCell.textContent = data.count;
+                countCell.classList.add('count');
+
+                row.appendChild(stateNameCell);
+                row.appendChild(countCell);
+
+                tableBody.appendChild(row);
+
+                // Highlight the new row
+                row.classList.add('highlight');
+
+                // Remove the highlight after 2 seconds
+                setTimeout(() => {
+                    row.classList.remove('highlight');
+                }, 2000);
+            }
+
+            // Limit the number of rows displayed
+            while (tableBody.rows.length > 10) { // Adjust this number based on screen space
+                tableBody.deleteRow(0); // Remove the oldest row
+            }
+
+        } catch (error) {
+            console.error('Error parsing data:', error);
+        }
+    }
+
+    // Initialize EventSource to listen for updates from the server
+    function initializeEventSource() {
+        const eventSource = new EventSource('/reactive/stream/car/sales');
+
+        eventSource.onmessage = handleServerEvent;
+
+        eventSource.onerror = function (error) {
+            console.error('EventSource failed:', error);
+            // Optionally handle errors or reconnect
+        };
+    }
+
+    // Start listening for server events
+    initializeEventSource();
+
+
+</script>
+</body>
+</html>

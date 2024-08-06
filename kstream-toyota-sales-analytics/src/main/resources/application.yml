@@ -1,35 +1,30 @@
 spring:
   profiles:
     active:
-      - word-processor
-      - orders-stream
-      - greetings-app
+      - v2
   application:
     name: kstream-toyota-sales-analytics
   kafka:
     bootstrap-servers: localhost:9092
     streams:
+      properties:
+        rocksdb.config.setWriteBufferSizeMB: 64
       # A unique identifier for your Kafka Streams application.
-      application-id: kstream-
+      application-id: car-sales-analytics
       # The address of the Kafka broker used by the Kafka Streams application.
       bootstrap-servers: localhost:9092
       # The default serializers/deserializers for keys and values in your streams.
       default-key-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
       default-value-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
       # The number of threads to use for stream processing.
-      num:
-        stream:
-          threads: 3
+      num-stream-threads: 1
         # Whether to clean up the local state store on application start.
-        clean:
-          up:
-            on:
-              start: true
+      clean-up-on-start: false
         # The directory for storing local state.
-        state:
-          dir: ../tmp/kafka-streams
+      state-dir: ./tmp/kafka-streams
         # The default replication factor for changelog topics.
-        replication:
-          factor: 1
+      replicationFactor: 1
+      commit-interval: 5
+
 
 

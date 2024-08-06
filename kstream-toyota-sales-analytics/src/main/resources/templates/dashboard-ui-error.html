@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Stream Not Ready</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #e74c3c;
+        }
+        p {
+            font-size: 18px;
+            color: #333;
+        }
+        .waiting-message {
+            font-size: 16px;
+            color: #555;
+        }
+        .retry-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .retry-button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Stream Not Ready</h1>
+    <p th:text="${errorMessage}">Please wait for the stream to be ready.</p>
+    <p class="waiting-message">The stream thread is currently starting up. Please wait and retry in a few moments.</p>
+    <a class="retry-button" href="/reactive/stream/car/sales">Retry</a>
+</div>
+</body>
+</html>
