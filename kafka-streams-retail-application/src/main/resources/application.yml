@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: kafka-streams-retail-application
+  kafka:
+    producer:
+      bootstrap-servers:
+      key-serializer:
+      value-serializer:
+

@@ -1,0 +1,46 @@
+spring:
+  profiles:
+    active:
+      #- words-stream
+      #- greetings-stream
+      - orders-stream
+      # greetings-stream
+      #- greetings-app
+  application:
+    name: kstream-processor-apps
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      properties:
+        spring.json.add.type.headers: false
+        spring.json.trusted.packages: '*'
+    producer:
+      spring.json.add.type.headers: false
+      spring.json.trusted.packages: '*'
+
+    streams:
+      # A unique identifier for your Kafka Streams application.
+      application-id: kstream-
+      # The address of the Kafka broker used by the Kafka Streams application.
+      bootstrap-servers: localhost:9092
+      # The default serializers/deserializers for keys and values in your streams.
+      default-key-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+      default-value-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+      # The number of threads to use for stream processing.
+      num:
+        stream:
+          threads: 3
+      # Whether to clean up the local state store on application start.
+        clean:
+          up:
+            on:
+              start: true
+      # The directory for storing local state.
+        state:
+          dir: ../tmp/kafka-streams
+      # The default replication factor for changelog topics.
+        replication:
+          factor: 1
+
+server:
+  port: 8083
